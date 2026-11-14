@@ -181,11 +181,11 @@
         </div>
       </details>
     </div>
-    <p class="note"><strong>Physical scope:</strong> The exchange and Kerr experiments are closed, finite-dimensional
-      atom–field models. The gate experiment is the independent ideal phase model of Eq. (7.87). Cavity leakage κ,
-      spontaneous emission γ, reflection losses, traveling optical pulses, atomic motion, preparation hardware, and
-      detector imperfections are omitted. The historical 16° result does not constitute a deterministic CNOT. This
-      simulator illustrates the mechanisms in §7.5; it does not simulate a complete scalable quantum computer.</p>
+    <p class="note"><strong>Physical limitations:</strong> Nielsen &amp; Chuang (the “Drawbacks” summary of
+      §7.5) identify a trade-off: stronger atom–field coupling makes it harder to couple photons into and out
+      of the cavity, limiting the ability to cascade gates. In §7.5.4, they also discuss absorption and
+      reflection losses as obstacles to cascading gates in the experiment described there. This simulator illustrates
+      idealized atom–field interactions and quantum gates; it is not a practical, general-purpose quantum computer.</p>
   </main>
   <script type="module" src="./app.js"></script>
 </body>
