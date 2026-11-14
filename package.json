@@ -1,0 +1,9 @@
+{
+  "name": "optical-cavity-qed-quantum-computer",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "start": "python3 -m http.server 3002 --bind 127.0.0.1 --directory public"
+  }
+}

@@ -1,11 +1,193 @@
-<html>
+<!doctype html>
+<html lang="en">
 
 <head>
-    <title>Optical Cavity QED Quantum Computer</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description"
+    content="Explore Nielsen & Chuang §7.5: atom–photon Rabi oscillations, atom-mediated Kerr nonlinearity, and optical cavity QED quantum gates.">
+  <title>Optical Cavity QED Simulator for Quantum Computation</title>
+  <link rel="icon"
+    href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230b1019'/%3E%3Cpath d='M8 6Q13 16 8 26M24 6Q19 16 24 26' fill='none' stroke='%236facfa' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='3' fill='%236bd9ad'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="./styles.css">
 </head>
 
 <body>
-    Hello, Optical Cavity QED Quantum Computer!
+  <main>
+    <div class="eyebrow">NIELSEN–CHUANG; QUANTUM COMPUTATION AND QUANTUM INFORMATION §7.5</div>
+    <h1>Optical Cavity QED Simulator<br class="desktop-break"> for Quantum Computation</h1>
+    <p class="intro">Let a <strong>single atom connect two photons</strong>. Explore how coherent atom–field exchange
+      inside a cavity produces a nonlinear phase shift, and how that interaction can become a quantum logic gate.</p>
+
+    <div class="mode-switch" role="tablist" aria-label="Choose an experiment">
+      <button id="tab-rabi" role="tab" aria-selected="true" aria-controls="experiment" tabindex="0"
+        data-mode="rabi"><span>01</span> Atom–photon exchange <small>§7.5.3</small></button>
+      <button id="tab-kerr" role="tab" aria-selected="false" aria-controls="experiment" tabindex="-1"
+        data-mode="kerr"><span>02</span> Atom-mediated Kerr <small>Fig. 7.5</small></button>
+      <button id="tab-gate" role="tab" aria-selected="false" aria-controls="experiment" tabindex="-1"
+        data-mode="gate"><span>03</span> Photon quantum gate <small>§7.5.4</small></button>
+    </div>
+
+    <div id="experiment" role="tabpanel" aria-labelledby="tab-rabi">
+      <div class="grid">
+        <section class="panel control" aria-labelledby="settings-title">
+          <div class="section-heading">
+            <h2 id="settings-title">Simulation Settings</h2><span class="badge" id="model-badge">IDEAL GATE</span>
+          </div>
+          <label for="input">Input State<select id="input"></select></label>
+          <label id="construction-control" for="construction">Gate Construction<select id="construction">
+              <option value="cnot">CNOT · H → cavity → H</option>
+              <option value="phase">Controlled phase · cavity only</option>
+            </select></label>
+          <div id="time-control" class="slider-group" hidden>
+            <label class="time" for="time"><span>Interaction time t</span><output id="time-value"
+                for="time"></output></label>
+            <input id="time" type="range" min="0" max="6.283185307179586" step="any" value="0.98">
+            <div class="time" aria-hidden="true"><span>0</span><span>π</span><span>2π</span></div>
+          </div>
+          <div id="detuning-control" class="slider-group" hidden>
+            <label class="time" for="detuning"><span>Detuning δ = (ω₀ − ω)/2</span><output id="detuning-value"
+                for="detuning"></output></label>
+            <input id="detuning" type="range" min="-4" max="4" step="any" value="0">
+            <div class="time" aria-hidden="true"><span>−4</span><span>Resonance · 0</span><span>4</span></div>
+          </div>
+          <div id="coupling-control" class="slider-group" hidden>
+            <label class="time" for="coupling"><span id="coupling-label">Atom–field coupling g</span><output
+                id="coupling-value" for="coupling"></output></label>
+            <input id="coupling" type="range" min="0" max="2" step="any" value="1">
+          </div>
+          <div id="coupling-b-control" class="slider-group" hidden>
+            <label class="time" for="coupling-b"><span>Mode b coupling gᵦ</span><output id="coupling-b-value"
+                for="coupling-b"></output></label>
+            <input id="coupling-b" type="range" min="0" max="2" step="any" value="1">
+          </div>
+          <div id="phase-control" class="slider-group">
+            <label class="time" for="phase"><span>Conditional phase Δ</span><output id="phase-value" for="phase">180° ·
+                π</output></label>
+            <input id="phase" type="range" min="0" max="6.283185307179586" step="any" value="3.141592653589793">
+            <div class="time" aria-hidden="true"><span>0</span><span>π · CNOT</span><span>2π</span></div>
+          </div>
+          <div id="local-controls">
+            <div class="local-phases">
+              <label for="phi-a">Local phase φₐ<input id="phi-a" type="number" min="-180" max="180" step="0.5"
+                  value="17.5"><span>degrees</span></label>
+              <label for="phi-b">Local phase φᵦ<input id="phi-b" type="number" min="-180" max="180" step="0.5"
+                  value="12.5"><span>degrees</span></label>
+            </div>
+            <label class="check"><input id="compensate" type="checkbox" checked> Compensate local phases</label>
+          </div>
+          <div class="row presets" id="presets"></div>
+          <button id="play" aria-pressed="false">▶ Sweep conditional phase</button>
+          <button id="reset" class="text-button">Reset this experiment</button>
+          <div class="math" id="encoding"></div>
+          <p id="control-note" class="muted"></p>
+          <div id="error" role="alert"></div>
+        </section>
+
+        <section class="panel experiment-view" aria-labelledby="view-title">
+          <div class="section-heading">
+            <h2 id="view-title">Cavity-Mediated Quantum Gate</h2><span id="view-badge" class="badge green">2 PHOTON
+              QUBITS</span>
+          </div>
+          <div class="stats">
+            <div class="stat"><small id="stat1-label">State fidelity with ideal CNOT output</small><strong class="good"
+                id="stat1">—</strong></div>
+            <div class="stat"><small id="stat2-label">Entanglement · concurrence</small><strong id="stat2">—</strong>
+            </div>
+            <div class="stat"><small id="stat3-label">Conditional phase Δ</small><strong id="stat3">—</strong></div>
+          </div>
+          <div class="circuit-wrap" id="circuit"></div>
+          <div id="stages" class="stages" role="group" aria-label="Choose an observation point"></div>
+          <p class="muted circuit-caption" id="circuit-caption"></p>
+          <div class="insight" id="insight" role="status"></div>
+          <div class="state-heading"><span class="muted" id="state-title">Complex state amplitudes</span><span
+              id="stage-name" class="stage-label">Output</span></div>
+          <div id="state-vector" class="state-vector" aria-label="State vector with complex amplitudes"></div>
+          <p class="muted state-note" id="state-note"></p>
+        </section>
+      </div>
+
+      <div class="two">
+        <section class="panel" aria-labelledby="prob-title">
+          <div class="section-heading">
+            <h2 id="prob-title">Measurement Probabilities</h2><span id="prob-badge" class="badge">OUTPUT</span>
+          </div>
+          <div id="probability-bars"></div>
+          <p id="prob-note" class="muted"></p>
+          <div id="phase-readout" class="phase-readout" hidden></div>
+        </section>
+        <section class="panel" aria-labelledby="sweep-title">
+          <div class="section-heading">
+            <h2 id="sweep-title">Conditional Phase &amp; Fidelity</h2><span id="chart-badge" class="badge">PARAMETER
+              SWEEP</span>
+          </div>
+          <canvas id="chart" role="img" aria-label="Parameter sweep chart"></canvas>
+          <div id="chart-legend" class="legend"></div>
+          <p id="chart-note" class="muted"></p>
+        </section>
+      </div>
+
+      <details class="panel theory">
+        <summary>Atoms, photons &amp; equations <span>Model notes ↗</span></summary>
+        <div class="theory-grid">
+          <div>
+            <h3>01 / Coherent exchange · Eqs. (7.77)–(7.80)</h3>
+            <p>A two-level atom exchanges one excitation with a single cavity mode. Kets are |field, atom⟩, with atomic
+              ground state 0 and excited state 1. We use the propagator in Eq. (7.77), in a rotating frame and with ℏ =
+              1. The printed Hamiltonian (7.76) has inconsistent signs; the implementation follows (7.77) directly.</p>
+            <div class="formula">Ω = √(g² + δ²)<br>P(absorption | initial photon) = (g²/Ω²) sin²(Ωt)<br>χᵢ =
+              arg[eⁱᵟᵗ(cos Ωt − i(δ/Ω) sin Ωt)]</div>
+            <p>At δ = 0, t = π/(2g) transfers a photon to the atom; t = π/(4g) creates maximal atom–field entanglement
+              from a single excitation. The refractive phase is undefined when the photon survival amplitude vanishes.
+              The units of g and δ are inverse time.</p>
+          </div>
+          <div>
+            <h3>02 / A three-level mediator · Eqs. (7.81)–(7.86)</h3>
+            <p>Two optical modes a and b couple a shared ground state 0 to excited states 1 and 2. The atom starts in 0.
+              We retain all eight states in the invariant subspace of (7.82), including photon absorption by the atom.
+            </p>
+            <div class="formula">Ωₐᵦ = √(δ² + gₐ² + gᵦ²)<br>φₐᵦ = arg[eⁱᵟᵗ(cos Ωₐᵦt − i(δ/Ωₐᵦ) sin Ωₐᵦt)]<br>χ₃ =
+              wrap(φₐᵦ − φₐ − φᵦ)</div>
+            <p>For this mode we use U = exp(+iHt) with the blocks printed in (7.83)–(7.85), as stated below (7.85), to
+              match (7.86) and the sign of Fig. 7.5. φₐ and φᵦ use the same expression with gᵦ = 0 and gₐ = 0,
+              respectively. The phase curves are survival-amplitude phases, not a unitary gate on the reduced optical
+              state. “Absorbed” means a coherent atomic excitation, which can return to the field.</p>
+          </div>
+          <div>
+            <h3>03 / From phase to logic · Eq. (7.87)</h3>
+            <p>In the separate ideal gate model, logical kets use the order |a,b⟩ = |00⟩, |01⟩, |10⟩, |11⟩. Each qubit
+              can be encoded in polarization or dual rails; 0 does not mean the absence of the entire photon qubit. Mode
+              a is the control; mode b is the target. The local phases are attached to their named modes.</p>
+            <div class="formula">U = diag(1, e<sup>iφᵦ</sup>, e<sup>iφₐ</sup>,
+              e<sup>i(φₐ+φᵦ+Δ)</sup>)<br>U<sub>corrected</sub> = diag(1, 1, 1, eⁱΔ)<br>CNOT = (I ⊗ H)
+              U<sub>corrected</sub>(π) (I ⊗ H)</div>
+            <p>The textbook reports φₐ ≈ 17.5°, φᵦ ≈ 12.5°, and Δ ≈ 16° for its historical experiment. The “16°” preset
+              uses these phases in a lossless illustration. “Ideal π” is an assumed interaction, not a prediction that
+              the three-level model achieves a deterministic CNOT.</p>
+          </div>
+          <div>
+            <h3>04 / Reading the results</h3>
+            <p>Probability is |amplitude|². In gate mode, fidelity F = |⟨ψ<sub>ideal</sub>|ψ⟩|² compares the selected
+              observation point with the ideal final output for the chosen input; it is a state fidelity, not an average
+              gate fidelity. Concurrence C = 2|ad − bc| quantifies pure two-qubit entanglement.</p>
+            <p>In Kerr mode, the eight amplitudes describe the full atom–field state without postselection. Its bars
+              group the three possible atomic levels. Phase values are principal angles in (−π,π]; a dash marks a
+              vanishing survival amplitude. Curves break across phase branch cuts.</p>
+            <p>Reference: Nielsen &amp; Chuang, <em>Quantum Computation and Quantum Information</em>, §7.5, pp. 297–309.
+              Historical experiment: <a href="https://arxiv.org/abs/quant-ph/9511008" target="_blank"
+                rel="noopener noreferrer">Turchette et al., Measurement of conditional phase shifts for quantum logic
+                (1995)</a>.</p>
+          </div>
+        </div>
+      </details>
+    </div>
+    <p class="note"><strong>Physical scope:</strong> The exchange and Kerr experiments are closed, finite-dimensional
+      atom–field models. The gate experiment is the independent ideal phase model of Eq. (7.87). Cavity leakage κ,
+      spontaneous emission γ, reflection losses, traveling optical pulses, atomic motion, preparation hardware, and
+      detector imperfections are omitted. The historical 16° result does not constitute a deterministic CNOT. This
+      simulator illustrates the mechanisms in §7.5; it does not simulate a complete scalable quantum computer.</p>
+  </main>
+  <script type="module" src="./app.js"></script>
 </body>
 
 </html>
