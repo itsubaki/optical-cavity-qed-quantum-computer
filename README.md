@@ -2,7 +2,6 @@
 
 A demo built with HTML, CSS, and JavaScript that explores atom–photon exchange, atom-mediated Kerr nonlinearity, and optical quantum gates.
 It uses the models described in Nielsen & Chuang, *Quantum Computation and Quantum Information*, §7.5.
-The layout and colors follow the harmonic oscillator and optical photon simulators.
 
 ## Experiments
 
