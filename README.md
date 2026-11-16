@@ -19,8 +19,10 @@ $$
 The nonlinear phase is the difference between the joint and individual survival phases:
 
 $$
-\chi_3 = \varphi_{ab}-\varphi_a-\varphi_b.
+\chi_3 \equiv \varphi_{ab}-\varphi_a-\varphi_b \pmod{2\pi}.
 $$
+
+The display uses the principal value of this phase difference.
 
 After compensating the local phases, the ideal gate becomes
 
