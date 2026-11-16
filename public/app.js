@@ -10,26 +10,26 @@ const defaults = {
 const settings = structuredClone(defaults);
 const inputOptions = {
   gate: [
-    ['plus0', '|+0⟩ (Superposition)'],
-    ['10', '|10⟩ (Basis state)'],
-    ['11', '|11⟩ (Basis state)'],
-    ['00', '|00⟩ (Basis state)'],
-    ['01', '|01⟩ (Basis state)'],
-    ['plus1', '|+1⟩ (Superposition)'],
-    ['uniform', '|++⟩ (Equal superposition)'],
+    ['plus0', '|+0⟩\u2002Superposition'],
+    ['10', '|10⟩\u2002Basis state'],
+    ['11', '|11⟩\u2002Basis state'],
+    ['00', '|00⟩\u2002Basis state'],
+    ['01', '|01⟩\u2002Basis state'],
+    ['plus1', '|+1⟩\u2002Superposition'],
+    ['uniform', '|++⟩\u2002Equal superposition'],
   ],
   rabi: [
-    ['photon', '|10⟩ (One photon, ground-state atom)'],
-    ['atom', '|01⟩ (Vacuum, excited atom)'],
-    ['superposition', '(|00⟩ + |10⟩)/√2 (Superposition)'],
-    ['vacuum', '|00⟩ (Vacuum, ground-state atom)'],
+    ['photon', '|10⟩\u2002One photon, ground-state atom'],
+    ['atom', '|01⟩\u2002Vacuum, excited atom'],
+    ['superposition', '(|00⟩ + |10⟩)/√2\u2002Superposition'],
+    ['vacuum', '|00⟩\u2002Vacuum, ground-state atom'],
   ],
   kerr: [
-    ['11', '|11⟩ (One photon in each mode)'],
-    ['10', '|10⟩ (Mode a only)'],
-    ['01', '|01⟩ (Mode b only)'],
-    ['uniform', '|++⟩ (Equal superposition)'],
-    ['00', '|00⟩ (Both modes empty)'],
+    ['11', '|11⟩\u2002One photon in each mode'],
+    ['10', '|10⟩\u2002Mode a only'],
+    ['01', '|01⟩\u2002Mode b only'],
+    ['uniform', '|++⟩\u2002Equal superposition'],
+    ['00', '|00⟩\u2002Both modes empty'],
   ],
 };
 let mode = 'rabi', stage = 4, snapshot, playing = false, animation, lastTime;
