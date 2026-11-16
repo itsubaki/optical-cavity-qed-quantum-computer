@@ -181,11 +181,11 @@
         </div>
       </details>
     </div>
-    <p class="note"><strong>Physical limitations:</strong> Nielsen &amp; Chuang (the “Drawbacks” summary of
-      §7.5) identify a trade-off: stronger atom–field coupling makes it harder to couple photons into and out
-      of the cavity, limiting the ability to cascade gates. In §7.5.4, they also discuss absorption and
-      reflection losses as obstacles to cascading gates in the experiment described there. This simulator illustrates
-      idealized atom–field interactions and quantum gates; it is not a practical, general-purpose quantum computer.</p>
+    <p class="note"><strong>Model scope:</strong> This simulator models closed atom–field dynamics and ideal photon
+      gates from §7.5. Atom–photon exchange retains at most one total excitation; the Kerr experiment retains an
+      eight-state system with a three-level atom. The photon gate uses a separate lossless phase model, so its ideal
+      π phase is not derived from the Kerr experiment. Inputs are assumed prepared. Cavity leakage, spontaneous
+      emission, reflection losses, atomic motion, traveling-pulse dynamics, and detector imperfections are not included.</p>
   </main>
   <script type="module" src="./app.js"></script>
 </body>
