@@ -9,9 +9,28 @@ const defaults = {
 };
 const settings = structuredClone(defaults);
 const inputOptions = {
-  gate: [['plus0', '|+0⟩\u2002Create a Bell state'], ['10', '|10⟩\u2002Observe the bit flip'], ['11', '|11⟩\u2002Reverse bit flip'], ['00', '|00⟩'], ['01', '|01⟩'], ['plus1', '|+1⟩'], ['uniform', '|++⟩\u2002Equal superposition']],
-  rabi: [['photon', '|10⟩\u2002One photon, ground-state atom'], ['atom', '|01⟩\u2002Vacuum, excited atom'], ['superposition', '(|00⟩ + |10⟩)/√2\u2002Phase probe'], ['vacuum', '|00⟩\u2002No excitation']],
-  kerr: [['11', '|11⟩\u2002One photon in each mode'], ['10', '|10⟩\u2002Mode a only'], ['01', '|01⟩\u2002Mode b only'], ['uniform', '|++⟩\u2002Optical superposition'], ['00', '|00⟩\u2002Both modes empty']]
+  gate: [
+    ['plus0', '|+0⟩ (Superposition)'],
+    ['10', '|10⟩ (Basis state)'],
+    ['11', '|11⟩ (Basis state)'],
+    ['00', '|00⟩ (Basis state)'],
+    ['01', '|01⟩ (Basis state)'],
+    ['plus1', '|+1⟩ (Superposition)'],
+    ['uniform', '|++⟩ (Equal superposition)'],
+  ],
+  rabi: [
+    ['photon', '|10⟩ (One photon, ground-state atom)'],
+    ['atom', '|01⟩ (Vacuum, excited atom)'],
+    ['superposition', '(|00⟩ + |10⟩)/√2 (Superposition)'],
+    ['vacuum', '|00⟩ (Vacuum, ground-state atom)'],
+  ],
+  kerr: [
+    ['11', '|11⟩ (One photon in each mode)'],
+    ['10', '|10⟩ (Mode a only)'],
+    ['01', '|01⟩ (Mode b only)'],
+    ['uniform', '|++⟩ (Equal superposition)'],
+    ['00', '|00⟩ (Both modes empty)'],
+  ],
 };
 let mode = 'rabi', stage = 4, snapshot, playing = false, animation, lastTime;
 let sweepCache = null;
